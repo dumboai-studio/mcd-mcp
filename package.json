@@ -3,6 +3,16 @@
   "version": "0.1.2",
   "type": "module",
   "description": "麦当劳点餐 MCP App：选门店 → 浏览菜单 → 购物车 → 结算 → 下单付款 → 订单状态",
+  "keywords": [
+    "mcp",
+    "mcp-apps",
+    "modelcontextprotocol",
+    "mcdonalds",
+    "麦当劳",
+    "ordering",
+    "claude"
+  ],
+  "author": "rxshi",
   "bin": {
     "mcd-mcp": "dist/server/main.js"
   },
@@ -62,5 +72,13 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruixingshi/mcp-mcd-apps.git"
+  },
+  "homepage": "https://github.com/ruixingshi/mcp-mcd-apps#readme",
+  "bugs": {
+    "url": "https://github.com/ruixingshi/mcp-mcd-apps/issues"
   }
 }
