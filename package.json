@@ -1,6 +1,6 @@
 {
   "name": "@dumbo-ai/mcd-mcp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "麦当劳点餐 MCP App：选门店 → 浏览菜单 → 购物车 → 结算 → 下单付款 → 订单状态",
   "keywords": [
