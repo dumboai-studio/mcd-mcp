@@ -11,8 +11,11 @@ import { mockCall } from "./mock.js";
 
 export const MCD_ENDPOINT = process.env.MCD_MCP_URL?.trim() || "https://mcp.mcd.cn";
 
-/** HTTP 模式下按请求注入的 Token（见 main.ts） */
-export const tokenStorage = new AsyncLocalStorage<string>();
+/**
+ * HTTP 模式下按请求注入调用方自己带来的 Token（见 main.ts）。
+ * 处于请求作用域内时不回退到环境变量，否则任何能访问服务的人都会借用部署者的账号。
+ */
+export const tokenStorage = new AsyncLocalStorage<{ token?: string }>();
 
 export class McdError extends Error {
   constructor(
@@ -31,7 +34,8 @@ export function isMock(): boolean {
 }
 
 export function resolveToken(): string | undefined {
-  const raw = tokenStorage.getStore() ?? process.env.MCD_MCP_TOKEN ?? "";
+  const scope = tokenStorage.getStore();
+  const raw = (scope ? scope.token : process.env.MCD_MCP_TOKEN) ?? "";
   const token = raw.replace(/^Bearer\s+/i, "").trim();
   return token || undefined;
 }
@@ -105,7 +109,9 @@ export async function callMcdEnvelope(
   const token = resolveToken();
   if (!token) {
     throw new McdError(
-      "未配置麦当劳 MCP Token：请设置环境变量 MCD_MCP_TOKEN（在 https://open.mcd.cn/mcp 登录 → 控制台 → 激活 → 复制）",
+      tokenStorage.getStore()
+        ? "请求没有携带麦当劳 MCP Token：HTTP 模式下请用 x-mcd-token 请求头、?token= 或 Authorization: Bearer 传入自己的 Token"
+        : "未配置麦当劳 MCP Token：请设置环境变量 MCD_MCP_TOKEN（在 https://open.mcd.cn/mcp 登录 → 控制台 → 激活 → 复制）",
       "NO_TOKEN",
     );
   }

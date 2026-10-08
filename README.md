@@ -97,11 +97,11 @@ Token 只在服务端使用，不会出现在界面或模型上下文里。
 **远程 HTTP 连接器**，先把服务暴露到公网，再在 设置 → Connectors → Add custom connector 填入地址：
 
 ```bash
-MCD_MCP_TOKEN=你的Token npm start
-npx cloudflared tunnel --url http://localhost:3001   # 连接器地址填 https://xxx.trycloudflare.com/mcp
+npm start
+npx cloudflared tunnel --url http://localhost:3001   # 连接器地址填 https://xxx.trycloudflare.com/mcp?token=你的Token
 ```
 
-HTTP 模式下 Token 的解析顺序是：请求头 `x-mcd-token` → 查询参数 `?token=` → `Authorization: Bearer`（仅当未设置环境变量时）→ 环境变量 `MCD_MCP_TOKEN`。部署给多人使用时，建议每人通过 `x-mcd-token` 请求头携带自己的 Token。
+`MCD_MCP_TOKEN` 只在 stdio 模式生效。HTTP 模式是给部署用的，每个请求必须自带调用方自己的 Token，按 请求头 `x-mcd-token` → 查询参数 `?token=` → `Authorization: Bearer` 的顺序读取，不会回退到环境变量：否则任何能访问到服务的人都会用部署者的麦当劳账号下单、查看配送地址。Claude 的自定义连接器只能填地址，所以把 Token 放在 `?token=` 里；能设置请求头的客户端优先用请求头，`?token=` 会出现在隧道、代理和访问日志里。
 
 ## 从源码运行
 
@@ -109,7 +109,7 @@ HTTP 模式下 Token 的解析顺序是：请求头 `x-mcd-token` → 查询参�
 npm install
 npm run build                              # 打包界面 + 编译服务端
 
-MCD_MCP_TOKEN=你的Token npm start          # Streamable HTTP，默认 http://localhost:3001/mcp
+npm start                                  # Streamable HTTP，默认 http://localhost:3001/mcp，Token 由每个请求自带
 MCD_MCP_TOKEN=你的Token npm run start:stdio
 MCD_MOCK=1 npm start                       # 模拟数据
 
@@ -123,7 +123,7 @@ npm run dev                                # 界面监听打包 + 服务端热�
 ```bash
 git clone --depth 1 https://github.com/modelcontextprotocol/ext-apps.git
 cd ext-apps/examples/basic-host && npm install
-SERVERS='["http://localhost:3001/mcp"]' npm start   # 打开 http://localhost:8080，选 mcd-order 点 Call Tool
+SERVERS='["http://localhost:3001/mcp?token=你的Token"]' npm start   # 打开 http://localhost:8080，选 mcd-order 点 Call Tool；MCD_MOCK=1 时不用带 Token
 ```
 
 想核对官方接口的原始返回：
