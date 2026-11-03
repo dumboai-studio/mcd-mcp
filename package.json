@@ -75,10 +75,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ruixingshi/mcp-mcd-apps.git"
+    "url": "git+https://github.com/dumboai-studio/mcd-mcp.git"
   },
-  "homepage": "https://github.com/ruixingshi/mcp-mcd-apps#readme",
+  "homepage": "https://github.com/dumboai-studio/mcd-mcp#readme",
   "bugs": {
-    "url": "https://github.com/ruixingshi/mcp-mcd-apps/issues"
+    "url": "https://github.com/dumboai-studio/mcd-mcp/issues"
   }
 }

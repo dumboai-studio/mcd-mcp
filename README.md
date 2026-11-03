@@ -87,7 +87,7 @@ Token 只在服务端使用，不会出现在界面或模型上下文里。
   "mcpServers": {
     "mcd-order": {
       "command": "node",
-      "args": ["/绝对路径/mcp-mcd-apps/dist/server/main.js", "--stdio"],
+      "args": ["/绝对路径/mcd-mcp/dist/server/main.js", "--stdio"],
       "env": { "MCD_MCP_TOKEN": "你的Token" }
     }
   }
