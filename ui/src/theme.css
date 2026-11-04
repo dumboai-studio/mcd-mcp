@@ -44,7 +44,6 @@
   --shadow-float: 0 1px 2px #0000000d, 0 6px 20px #00000014;
   --media-surface: #ffffff;
   --media-ink: #525252;
-  --logo-filter: grayscale(1);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -76,7 +75,6 @@
     --glass-fill: #2a2a2aa6;
     --shadow-control: 0 1px 1px #0000004d;
     --shadow-float: 0 1px 2px #00000066, 0 6px 20px #00000073;
-    --logo-filter: grayscale(1) invert(1);
     color-scheme: dark;
   }
 }
@@ -108,7 +106,6 @@
   --glass-fill: #2a2a2aa6;
   --shadow-control: 0 1px 1px #0000004d;
   --shadow-float: 0 1px 2px #00000066, 0 6px 20px #00000073;
-  --logo-filter: grayscale(1) invert(1);
   color-scheme: dark;
 }
 :where(button, input, select, a):focus-visible {

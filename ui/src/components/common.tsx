@@ -1,6 +1,7 @@
 import { Icon } from "./Icon.js";
 import type { ReactNode } from "react";
 import { useState } from "react";
+import mcdLogo from "../assets/mcd-logo.png?inline";
 import { ApiError } from "../api.js";
 import { statusTimeline } from "../format.js";
 
@@ -36,24 +37,9 @@ export function OrderTimeline({ status, delivery }: { status: string | undefined
   );
 }
 
-/** Monochrome brand mark that follows the host theme. */
+/** Official logo, bundled unchanged so it also works without CDN access. */
 export function BrandMark({ size = 28 }: { size?: number }) {
-  return (
-    <svg className="brand-mark" viewBox="0 0 100 100" width={size} height={size} role="img" aria-label="麦当劳">
-      <rect width="100" height="100" rx="22" fill="var(--accent)" />
-      <g
-        transform="translate(26 27)"
-        fill="none"
-        stroke="var(--on-accent)"
-        strokeWidth="5.5"
-        strokeLinecap="butt"
-        strokeLinejoin="round"
-      >
-        <path d="M2.75 44V23C2.75 10.45 8.06 2.75 13.38 2.75C18.69 2.75 24 10.45 24 23V44" />
-        <path d="M24 44V23C24 10.45 29.31 2.75 34.63 2.75C39.94 2.75 45.25 10.45 45.25 23V44" />
-      </g>
-    </svg>
-  );
+  return <img className="brand-mark" src={mcdLogo} alt="麦当劳" width={size} height={size} />;
 }
 
 export function PlusIcon({ size = 14 }: { size?: number }) {
