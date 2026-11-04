@@ -7,30 +7,15 @@
 ## 架构
 
 ```mermaid
-flowchart TB
-    subgraph Host["MCP Apps client"]
-        H["Conversation / MCP host"]
-        UI["React ordering UI<br/>Sandboxed iframe"]
-        H <-->|"App bridge: tools and UI state"| UI
-    end
-    subgraph App["mcd-mcp"]
-        S["MCP tools<br/>Normalize upstream results"]
-        R["Bundled HTML resource<br/>ui://mcd-order/index.html"]
-        K["Caller token<br/>Server-side only"]
-        S --- R
-        K --> S
-    end
-    H <-->|"MCP over stdio / HTTP"| S
-    R -->|"Host loads the interface"| UI
-    S <-->|"JSON-RPC + Bearer token"| API["McDonald's official MCP"]
+flowchart LR
+    C["MCP Apps 客户端<br/>对话 + 点餐界面"] <-->|"stdio / HTTP"| S["mcd-mcp<br/>工具 + 界面资源"]
+    S <-->|"JSON-RPC"| API["麦当劳官方 MCP<br/>菜单 + 订单"]
     classDef client fill:#e0f2fe,stroke:#0284c7,color:#0f172a
     classDef service fill:#ecfdf5,stroke:#059669,color:#0f172a
     classDef external fill:#f1f5f9,stroke:#64748b,color:#0f172a
-    class H,UI client
-    class S,R service
-    class API,K external
-    style Host fill:#f8fafc,stroke:#cbd5e1
-    style App fill:#f8fafc,stroke:#cbd5e1
+    class C client
+    class S service
+    class API external
 ```
 
 客户端加载随服务提供的界面，并把界面的工具调用转给本服务。选店、浏览菜单和结算都可以直接点击完成，不需要反复与模型对话。宿主协议见 [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview)。

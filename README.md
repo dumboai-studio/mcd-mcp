@@ -7,30 +7,15 @@ Browse the menu, customize meals, apply coupons and follow your order inside an 
 ## Architecture
 
 ```mermaid
-flowchart TB
-    subgraph Host["MCP Apps client"]
-        H["Conversation / MCP host"]
-        UI["React ordering UI<br/>Sandboxed iframe"]
-        H <-->|"App bridge: tools and UI state"| UI
-    end
-    subgraph App["mcd-mcp"]
-        S["MCP tools<br/>Normalize upstream results"]
-        R["Bundled HTML resource<br/>ui://mcd-order/index.html"]
-        K["Caller token<br/>Server-side only"]
-        S --- R
-        K --> S
-    end
-    H <-->|"MCP over stdio / HTTP"| S
-    R -->|"Host loads the interface"| UI
-    S <-->|"JSON-RPC + Bearer token"| API["McDonald's official MCP"]
+flowchart LR
+    C["MCP Apps client<br/>Chat + ordering UI"] <-->|"stdio / HTTP"| S["mcd-mcp<br/>Tools + UI resource"]
+    S <-->|"JSON-RPC"| API["McDonald's MCP<br/>Official service"]
     classDef client fill:#e0f2fe,stroke:#0284c7,color:#0f172a
     classDef service fill:#ecfdf5,stroke:#059669,color:#0f172a
     classDef external fill:#f1f5f9,stroke:#64748b,color:#0f172a
-    class H,UI client
-    class S,R service
-    class API,K external
-    style Host fill:#f8fafc,stroke:#cbd5e1
-    style App fill:#f8fafc,stroke:#cbd5e1
+    class C client
+    class S service
+    class API external
 ```
 
 The host loads the bundled UI and forwards its tool calls to this server. Store search, menu browsing and checkout happen in the interface without another model turn. See [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) for the host protocol.
