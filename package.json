@@ -2,7 +2,7 @@
   "name": "@dumbo-ai/mcd-mcp",
   "version": "0.1.4",
   "type": "module",
-  "description": "麦当劳点餐 MCP App：选门店 → 浏览菜单 → 购物车 → 结算 → 下单付款 → 订单状态",
+  "description": "McDonald's ordering MCP App with menus, cart, coupons and checkout",
   "keywords": [
     "mcp",
     "mcp-apps",
@@ -62,6 +62,8 @@
   "files": [
     "dist/",
     "README.md",
+    "README.zh.md",
+    "docs/",
     "LICENSE",
     ".env.example"
   ],

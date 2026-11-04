@@ -1,18 +1,59 @@
-# 麦当劳点餐 MCP App
+# McDonald's Ordering MCP App
 
-一个 **[MCP App](https://modelcontextprotocol.io/extensions/apps/build)**：它不只是一组工具，而是随服务下发一个完整的点餐**界面**，在宿主的沙箱 iframe 里渲染，选门店、加购物车、选券、下单、看订单全部在界面里点，不消耗对话轮次。
+[English](README.md) | [简体中文](README.zh.md)
 
-底层调用 [麦当劳官方 MCP 服务](https://open.mcd.cn/mcp)（`https://mcp.mcd.cn`）。
+Browse the menu, customize meals, apply coupons and follow your order inside an MCP Apps client. `@dumbo-ai/mcd-mcp` adds a React ordering interface to the [McDonald's China MCP service](https://open.mcd.cn/mcp).
 
-> **声明**：本项目为非官方的第三方客户端，与麦当劳公司无任何关联，未获其授权或认可。
-> 「麦当劳」「McDonald's」及金拱门标识均为麦当劳公司的注册商标，归其所有。
-> 本项目仅通过麦当劳对外开放的 MCP 接口访问服务，使用者需自行申请并遵守官方条款。
+## Architecture
 
-## 快速开始
+```mermaid
+flowchart TB
+    subgraph Host["MCP Apps client"]
+        H["Conversation / MCP host"]
+        UI["React ordering UI<br/>Sandboxed iframe"]
+        H <-->|"App bridge: tools and UI state"| UI
+    end
+    subgraph App["mcd-mcp"]
+        S["MCP tools<br/>Normalize upstream results"]
+        R["Bundled HTML resource<br/>ui://mcd-order/index.html"]
+        K["Caller token<br/>Server-side only"]
+        S --- R
+        K --> S
+    end
+    H <-->|"MCP over stdio / HTTP"| S
+    R -->|"Host loads the interface"| UI
+    S <-->|"JSON-RPC + Bearer token"| API["McDonald's official MCP"]
+    classDef client fill:#e0f2fe,stroke:#0284c7,color:#0f172a
+    classDef service fill:#ecfdf5,stroke:#059669,color:#0f172a
+    classDef external fill:#f1f5f9,stroke:#64748b,color:#0f172a
+    class H,UI client
+    class S,R service
+    class API,K external
+    style Host fill:#f8fafc,stroke:#cbd5e1
+    style App fill:#f8fafc,stroke:#cbd5e1
+```
 
-需要 Node 20+，以及一个麦当劳 MCP Token（<https://open.mcd.cn/mcp> → 手机号登录 → 控制台 → 激活 → 复制，每分钟限 600 次请求）。
+The host loads the bundled UI and forwards its tool calls to this server. Store search, menu browsing and checkout happen in the interface without another model turn. See [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) for the host protocol.
 
-在支持 MCP Apps 的宿主里加入配置即可，不用克隆仓库：
+**Order flow:** choose pickup, delivery or drive-through → select a store → add meals → review coupons and price → confirm the order → pay in the McDonald's app → track the order.
+
+## Screenshots
+
+Captured from the actual UI with built-in mock data and placeholder food images. Prices and stores are examples; no real order was placed.
+
+**Menu and shopping cart**
+
+![Menu categories, meal cards and shopping cart](docs/screenshots/menu.png)
+
+**Checkout**
+
+![Checkout with coupons, pickup options and price breakdown](docs/screenshots/checkout.png)
+
+## Quick start
+
+You need **Node.js 20+**, a client that supports MCP Apps, and a token from the [McDonald's MCP platform](https://open.mcd.cn/mcp).
+
+Add this entry to your client's MCP configuration:
 
 ```json
 {
@@ -20,118 +61,84 @@
     "mcd-order": {
       "command": "npx",
       "args": ["-y", "@dumbo-ai/mcd-mcp", "--stdio"],
-      "env": { "MCD_MCP_TOKEN": "你的Token" }
+      "env": { "MCD_MCP_TOKEN": "your-token" }
     }
   }
 }
 ```
 
-然后在对话里说「帮我点个麦当劳」「看看北京中关村的麦当劳菜单」即可。
+Then ask the assistant to open McDonald's ordering, for example: “帮我点个麦当劳”. The ordering UI is currently in Chinese.
 
-没有 Token 时，把 `MCD_MCP_TOKEN` 换成 `MCD_MOCK` = `1`，会使用内置模拟数据，不访问官方接口，适合先看界面。
+To preview without an account, replace the `env` object with `{ "MCD_MOCK": "1" }`. This uses local sample data and does not call McDonald's.
 
-> 宿主必须支持 MCP Apps 的界面渲染才能看到界面。若宿主只渲染文本，则退化为纯工具调用，建议改用下面的远程连接器方式。
+You can also install once with `npm install -g @dumbo-ai/mcd-mcp`, then use `"command": "mcd-mcp"` and `"args": ["--stdio"]`. If the client cannot find the command, use its absolute path.
 
-## 这个 App 做了什么
+## What you can do
 
-| 环节 | 用户看到、操作什么 | 用到的工具 |
-|---|---|---|
-| 选择门店 | 选自取 / 外送 / 得来速，确认门店或配送地址 | `query-nearby-stores`、`delivery-query-addresses`、`delivery-create-address`、`delivery-query-stores` |
-| 浏览菜单 | 分类、餐品名称、价格、划线价、促销标签、套餐详情 | `query-meals`、`query-meal-detail` |
-| 点餐 | 加入购物车、增减数量、删除商品、套餐换品与加减配料 | 界面维护购物车，结算时转成官方 `items[]` |
-| 结算 | 选优惠券、取餐方式、餐具、备注；核对餐品、配送费、优惠、应付金额 | `query-store-coupons` + `calculate-price` 获取官方报价 |
-| 付款 | 点击「确认下单并付款」，界面内生成支付二维码。**麦当劳只支持在其 App 内付款，不提供微信或支付宝收款码**，扫码后会拉起麦当劳 App | `create-order` |
-| 查看结果 | 订单状态、取餐码 / 取餐柜 / 配送信息，自动刷新，可取消待支付订单 | `query-order` 轮询、`cancel-order`，在原界面更新 |
+| Step             | In the app                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------- |
+| Select a store   | Pickup, delivery or drive-through; saved delivery addresses and address creation                  |
+| Build a meal     | Menu categories, prices, promotions, combo substitutions and ingredient choices                   |
+| Review checkout  | Coupons, utensils, notes, delivery fees and the price returned by the official service            |
+| Pay              | Confirm the order and scan the payment QR code to continue in the McDonald's app                  |
+| Follow the order | Automatically refreshed status, pickup or delivery information, and cancellation of unpaid orders |
 
-## 它是怎么作为 MCP App 工作的
+The UI follows the host's light/dark theme and adapts to the available width. On hosts that support `updateModelContext`, it shares the selected store, cart and order state with the assistant.
 
-```
-宿主（Claude 等）  ──MCP──▶  本服务（server/）  ──JSON-RPC + Bearer Token──▶  https://mcp.mcd.cn
-     ▲                          │
-     │  ui://mcd-order/index.html（React 打包成的单文件页面）
-     └── 在沙箱 iframe 中渲染，界面通过 app.callServerTool 回调本服务的工具
-```
+A client without MCP Apps rendering receives tool results but cannot display this interface. App-only tools depend on the host honoring their visibility metadata; the server does not enforce a separate UI-only authorization check.
 
-- **界面随服务下发**。服务注册了 `ui://mcd-order/index.html` 这个 UI 资源，入口工具 `mcd-order` 带 `_meta.ui` 指向它；宿主拿到后在沙箱 iframe 里渲染。
-- **交互不占对话轮次**。界面直接用 `app.callServerTool` 调用本服务的工具，查门店、翻菜单、算价这些都不用经过模型。
-- **下单必须由人点击**。`delivery-create-address`、`create-order`、`cancel-order` 声明为 `visibility: ["app"]`，只有界面能调用，模型无法替用户下单。
-- **模型仍然看得见状态**。界面通过 `updateModelContext` 把当前门店、购物车、订单状态同步回模型，方便继续对话。
-- **跟随宿主外观与尺寸**。主题、语言、容器尺寸都来自宿主的 host context；容器宽度达到 860px 时，菜单切换为「分类 + 卡片网格 + 右侧购物车栏」的宽屏布局。
-- **对不支持界面的宿主也可用**。工具的 `content` 里同时给出文本摘要和 JSON，`structuredContent` 里是归一化后的结构。
+## Tools
 
-## 工具清单
+| Tool                       | Visibility  | Purpose                                                                |
+| -------------------------- | ----------- | ---------------------------------------------------------------------- |
+| `mcd-order`                | Model + app | Open the interface; optionally prefill mode, city, keyword or order ID |
+| `query-nearby-stores`      | Model + app | Find pickup or drive-through stores                                    |
+| `delivery-query-addresses` | Model + app | List saved delivery addresses                                          |
+| `delivery-query-stores`    | Model + app | Find stores for a delivery address                                     |
+| `query-meals`              | Model + app | Read the store menu                                                    |
+| `query-meal-detail`        | Model + app | Read combo choices and ingredients                                     |
+| `query-store-coupons`      | Model + app | List applicable coupons                                                |
+| `calculate-price`          | Model + app | Request an official price quote                                        |
+| `query-order`              | Model + app | Read order status and pickup/delivery information                      |
+| `delivery-create-address`  | App only    | Save a delivery address                                                |
+| `create-order`             | App only    | Create an order and return the payment link                            |
+| `cancel-order`             | App only    | Cancel an unpaid order                                                 |
 
-| 工具 | 可见性 | 说明 |
-|---|---|---|
-| `mcd-order` | 模型 + 界面 | 打开点餐界面。可选参数 `mode`（pickup / delivery / drive）、`city`、`keyword`、`orderId` |
-| `query-nearby-stores` | 模型 + 界面 | 到店 / 得来速门店查询（收藏、城市+关键词、经纬度） |
-| `delivery-query-addresses` | 模型 + 界面 | 配送地址列表 |
-| `delivery-query-stores` | 模型 + 界面 | 按地址查询可配送门店 |
-| `query-meals` | 模型 + 界面 | 门店实时菜单 |
-| `query-meal-detail` | 模型 + 界面（无界面渲染） | 套餐组成、默认配料 |
-| `query-store-coupons` | 模型 + 界面（无界面渲染） | 当前门店可用优惠券 |
-| `calculate-price` | 模型 + 界面（无界面渲染） | 官方报价（返回单位为分） |
-| `query-order` | 模型 + 界面 | 订单状态 / 取餐 / 配送信息 |
-| `delivery-create-address` | 仅界面 | 新增配送地址 |
-| `create-order` | 仅界面 | 创建订单，返回 `orderId` 与 `payH5Url` |
-| `cancel-order` | 仅界面 | 取消待支付订单 |
+## Configuration and HTTP hosting
 
-Token 只在服务端使用，不会出现在界面或模型上下文里。
+| Variable        | Purpose                                                      |
+| --------------- | ------------------------------------------------------------ |
+| `MCD_MCP_TOKEN` | Account token for stdio mode and the probe script            |
+| `MCD_MOCK`      | Set to `1` to use built-in mock data                         |
+| `MCD_MCP_URL`   | Optional upstream override; defaults to `https://mcp.mcd.cn` |
+| `PORT`          | HTTP listen port; defaults to `3001`                         |
 
-## 其他接入方式
+The server does not load `.env` automatically. Set variables in your shell or client configuration; see [.env.example](.env.example).
 
-**Claude Desktop 本地 stdio**，指向已构建的文件：
+Without `--stdio`, the server exposes Streamable HTTP at `/mcp` and a health check at `/healthz`. After a global install:
 
-```json
-{
-  "mcpServers": {
-    "mcd-order": {
-      "command": "node",
-      "args": ["/绝对路径/mcd-mcp/dist/server/main.js", "--stdio"],
-      "env": { "MCD_MCP_TOKEN": "你的Token" }
-    }
-  }
-}
+```sh
+mcd-mcp
 ```
 
-**远程 HTTP 连接器**，先把服务暴露到公网，再在 设置 → Connectors → Add custom connector 填入地址：
+Connect an HTTP-capable client to `http://localhost:3001/mcp`. **Each HTTP request must carry the caller's own token**, read in this order: `x-mcd-token` header → `?token=` query parameter → `Authorization: Bearer`. HTTP mode does not fall back to `MCD_MCP_TOKEN`. Prefer headers when supported, since query parameters can appear in access logs. Tokens are used by the server, not passed to the UI or model.
 
-```bash
-npm start
-npx cloudflared tunnel --url http://localhost:3001   # 连接器地址填 https://xxx.trycloudflare.com/mcp?token=你的Token
-```
+## Development
 
-`MCD_MCP_TOKEN` 只在 stdio 模式生效。HTTP 模式是给部署用的，每个请求必须自带调用方自己的 Token，按 请求头 `x-mcd-token` → 查询参数 `?token=` → `Authorization: Bearer` 的顺序读取，不会回退到环境变量：否则任何能访问到服务的人都会用部署者的麦当劳账号下单、查看配送地址。Claude 的自定义连接器只能填地址，所以把 Token 放在 `?token=` 里；能设置请求头的客户端优先用请求头，`?token=` 会出现在隧道、代理和访问日志里。
-
-## 从源码运行
-
-```bash
+```sh
+git clone https://github.com/dumboai-studio/mcd-mcp.git
+cd mcd-mcp
 npm install
-npm run build                              # 打包界面 + 编译服务端
-
-npm start                                  # Streamable HTTP，默认 http://localhost:3001/mcp，Token 由每个请求自带
-MCD_MCP_TOKEN=你的Token npm run start:stdio
-MCD_MOCK=1 npm start                       # 模拟数据
-
-npm run dev                                # 界面监听打包 + 服务端热重启
+npm run check
+MCD_MOCK=1 npm start
 ```
 
-环境变量见 [.env.example](.env.example)：`MCD_MCP_TOKEN`、`PORT`、`MCD_MOCK`、`MCD_MCP_URL`（可选，默认 `https://mcp.mcd.cn`）。
+`npm run check` typechecks and builds the React UI into a single HTML resource, then compiles the server. `npm run dev` watches both. To connect a client to a local build, use `node` with `["/absolute/path/mcd-mcp/dist/server/main.js", "--stdio"]`. Avoid `npm run start:stdio` as the client's launch command because npm output can interfere with stdio messages.
 
-不经过宿主调试时，MCP Apps 官方仓库自带一个测试宿主：
+For raw upstream responses, use `npm run probe -- query-nearby-stores '{"searchType":1,"beType":1}'` with `MCD_MCP_TOKEN` set. For a development host, see the [official MCP Apps basic-host example](https://github.com/modelcontextprotocol/ext-apps/tree/main/examples/basic-host).
 
-```bash
-git clone --depth 1 https://github.com/modelcontextprotocol/ext-apps.git
-cd ext-apps/examples/basic-host && npm install
-SERVERS='["http://localhost:3001/mcp?token=你的Token"]' npm start   # 打开 http://localhost:8080，选 mcd-order 点 Call Tool；MCD_MOCK=1 时不用带 Token
-```
+Source: [tools and UI resource](server/server.ts) · [upstream client](server/mcd-client.ts) · [UI flow](ui/src/Shell.tsx) · [mock data](server/mock.ts).
 
-想核对官方接口的原始返回：
+## License and affiliation
 
-```bash
-MCD_MCP_TOKEN=你的Token npm run probe -- query-nearby-stores '{"searchType":1,"beType":1}'
-```
-
-## 许可证
-
-[MIT](LICENSE)。本项目的代码以 MIT 授权；麦当劳的商标与品牌资产不在此授权范围内。
+[MIT](LICENSE). This is an independent, unofficial client, not affiliated with or endorsed by McDonald's. McDonald's names, logos and brand assets belong to their owners and are not covered by this project's license. Obtain your own token and follow the official service's terms.
