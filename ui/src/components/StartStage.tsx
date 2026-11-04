@@ -1,3 +1,4 @@
+import { Icon } from "./Icon.js";
 import type { App } from "@modelcontextprotocol/ext-apps";
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { MODE_META, type OrderMode, type StartPayload, type Store } from "../../../shared/types.js";
@@ -5,7 +6,7 @@ import { api } from "../api.js";
 import { ErrorBox } from "./common.js";
 
 const MODES: OrderMode[] = ["pickup", "delivery", "drive"];
-const MODE_ICON: Record<OrderMode, string> = { pickup: "🏪", delivery: "🛵", drive: "🚗" };
+const MODE_ICON = { pickup: "store", delivery: "delivery", drive: "car" } as const;
 const MODE_DESC: Record<OrderMode, string> = {
   pickup: "到餐厅柜台或取餐柜取餐",
   delivery: "麦乐送配送到指定地址",
@@ -88,10 +89,11 @@ export function StartStage({
           <button
             key={m}
             className={`mode-card${m === mode ? " active" : ""}`}
+            aria-pressed={m === mode}
             onClick={() => onMode(m)}
             type="button"
           >
-            <span className="mode-icon">{MODE_ICON[m]}</span>
+            <span className="mode-icon"><Icon name={MODE_ICON[m]} size={24} /></span>
             <span className="mode-label">{MODE_META[m].label}</span>
             <span className="mode-desc muted small">{MODE_DESC[m]}</span>
           </button>

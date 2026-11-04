@@ -1,3 +1,4 @@
+import { Icon } from "./Icon.js";
 import type { ReactNode } from "react";
 import { useState } from "react";
 import { ApiError } from "../api.js";
@@ -35,19 +36,15 @@ export function OrderTimeline({ status, delivery }: { status: string | undefined
   );
 }
 
-/** 金拱门样式的品牌标（矢量绘制，不依赖图片） */
-/**
- * 金拱门。几何比例取自麦当劳官方素材的像素实测：拱占红底宽 48%、高 44%，
- * 两道拱共用中间那条腿，每道拱各自关于自己的峰对称。
- */
+/** Monochrome brand mark that follows the host theme. */
 export function BrandMark({ size = 28 }: { size?: number }) {
   return (
     <svg className="brand-mark" viewBox="0 0 100 100" width={size} height={size} role="img" aria-label="麦当劳">
-      <rect width="100" height="100" rx="22" fill="var(--mcd-red)" />
+      <rect width="100" height="100" rx="22" fill="var(--accent)" />
       <g
         transform="translate(26 27)"
         fill="none"
-        stroke="var(--mcd-yellow)"
+        stroke="var(--on-accent)"
         strokeWidth="5.5"
         strokeLinecap="butt"
         strokeLinejoin="round"
@@ -62,7 +59,7 @@ export function BrandMark({ size = 28 }: { size?: number }) {
 export function PlusIcon({ size = 14 }: { size?: number }) {
   return (
     <svg className="icon" viewBox="0 0 16 16" width={size} height={size} aria-hidden>
-      <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
 }
@@ -70,7 +67,7 @@ export function PlusIcon({ size = 14 }: { size?: number }) {
 export function MinusIcon({ size = 14 }: { size?: number }) {
   return (
     <svg className="icon" viewBox="0 0 16 16" width={size} height={size} aria-hidden>
-      <path d="M2.5 8h11" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M2.5 8h11" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
     </svg>
   );
 }
@@ -119,36 +116,18 @@ export function Badge({ children, tone = "default" }: { children: ReactNode; ton
   return <span className={`badge ${tone}`}>{children}</span>;
 }
 
-const EMOJI: [RegExp, string][] = [
-  [/套餐/, "🍔🍟"],
-  [/堡|汉堡|巨无霸|吉士/, "🍔"],
-  [/薯/, "🍟"],
-  [/鸡翅|麦乐鸡|鸡块|鸡腿/, "🍗"],
-  [/咖啡/, "☕"],
-  [/可乐|雪碧|饮|茶|奶昔|汁/, "🥤"],
-  [/冰淇淋|圆筒|麦旋风|甜筒/, "🍦"],
-  [/派/, "🥧"],
-  [/玉米/, "🌽"],
-  [/鱼/, "🐟"],
-];
-
-export function foodEmoji(name: string): string {
-  for (const [re, emoji] of EMOJI) if (re.test(name)) return emoji;
-  return "🍽️";
-}
-
-/** 餐品图片，加载失败或缺失时显示表情占位 */
+/** 餐品图片，加载失败或缺失时显示中性图标占位 */
 export function MealImage({ src, name, size = 64 }: { src?: string; name: string; size?: number }) {
-  const [failed, setFailed] = useState(false);
-  const style = { width: size, height: size, fontSize: Math.round(size * 0.45) };
-  if (!src || failed) {
+  const [failedSrc, setFailedSrc] = useState<string | undefined>();
+  const style = { width: size, height: size };
+  if (!src || failedSrc === src) {
     return (
       <div className="meal-img placeholder" style={style} aria-hidden>
-        {foodEmoji(name)}
+        <Icon name="meal" size={Math.round(size * 0.45)} />
       </div>
     );
   }
-  return <img className="meal-img" style={style} src={src} alt={name} loading="lazy" onError={() => setFailed(true)} />;
+  return <img className="meal-img" style={style} src={src} alt={name} loading="lazy" onError={() => setFailedSrc(src)} />;
 }
 
 export function Stepper({

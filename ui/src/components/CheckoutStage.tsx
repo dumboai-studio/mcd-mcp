@@ -184,7 +184,7 @@ export function CheckoutStage({
               return (
                 <li key={c.couponId} className={`coupon${inUse ? " in-use" : ""}${!inUse && !eligible ? " disabled" : ""}`}>
                   <div className="coupon-main">
-                    <div className="coupon-title">🎫 {c.title}</div>
+                    <div className="coupon-title">{c.title}</div>
                     <div className="muted small">
                       {c.products.length > 0 ? `适用：${c.products.map((p) => p.productName ?? p.productCode).join("、")}` : "适用：不限餐品"}
                       {c.tradeDateTime && <span> · 有效期 {c.tradeDateTime}</span>}

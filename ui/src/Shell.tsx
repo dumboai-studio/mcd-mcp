@@ -16,7 +16,7 @@ import {
   type StartPayload,
   type Store,
 } from "../../shared/types.js";
-import { cartCount, cartReducer, type CartLine } from "./cart.js";
+import { cartReducer, type CartLine } from "./cart.js";
 import { Header, type Stage } from "./components/Header.js";
 import { StartStage } from "./components/StartStage.js";
 import { AddressStage } from "./components/AddressStage.js";
@@ -244,7 +244,6 @@ export function Shell({
         store={session.store}
         address={session.address}
         mock={meta.mock}
-        cartCount={cartCount(cart)}
       />
       {!meta.tokenConfigured && (
         <div className="notice warn">服务端未配置 MCD_MCP_TOKEN，查询会失败。请在 https://open.mcd.cn/mcp 申请后配置环境变量。</div>

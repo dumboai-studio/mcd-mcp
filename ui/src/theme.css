@@ -1,0 +1,147 @@
+/* Deernova 0.2.0: paper surfaces, neutral emphasis, semantic status colors. */
+:root {
+  --canvas: #f5f5f5;
+  --surface: #fafafa;
+  --surface-raised: #ffffff;
+  --surface-sunken: #ebebeb;
+  --ink: #171717;
+  --ink-secondary: #525252;
+  --ink-tertiary: #666666;
+  --line: #e3e3e3;
+  --line-control: #8a8a8a;
+  --accent: var(--ink);
+  --accent-soft: #e8e8e8;
+  --on-accent: #ffffff;
+  --focus-ring: var(--accent);
+  --success: #1f6b66;
+  --success-soft: #ddeeec;
+  --warning: #8a5a0b;
+  --warning-soft: #f5ead3;
+  --danger: #b0283f;
+  --danger-soft: #f7e1e4;
+  --info: #2c5f86;
+  --info-soft: #e1ebf3;
+  --fill-hover: #0000000a;
+  --fill-selected: #00000012;
+  --scrim: #00000052;
+  --glass-fill: #ffffffa6;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-full: 999px;
+  --stroke-hairline: 0.5px;
+  --control-mac-sm: 20px;
+  --control-mac: 24px;
+  --control-mac-lg: 28px;
+  --shadow-control: 0 1px 1px #0000000d;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font-serif:
+    ui-serif, "New York", "Iowan Old Style", Georgia, "PingFang SC", serif;
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC",
+    "Hiragino Sans GB", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, "PingFang SC", monospace;
+  --shadow-float: 0 1px 2px #0000000d, 0 6px 20px #00000014;
+  --media-surface: #ffffff;
+  --media-ink: #525252;
+  --logo-filter: grayscale(1);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --canvas: #161616;
+    --surface: #1c1c1c;
+    --surface-raised: #252525;
+    --surface-sunken: #111111;
+    --ink: #ededed;
+    --ink-secondary: #a3a3a3;
+    --ink-tertiary: #8c8c8c;
+    --line: #2f2f2f;
+    --line-control: #737373;
+    --accent: var(--ink);
+    --accent-soft: #2e2e2e;
+    --on-accent: #161616;
+    --focus-ring: var(--accent);
+    --success: #6cc3b4;
+    --success-soft: #183230;
+    --warning: #e2b054;
+    --warning-soft: #3a2e17;
+    --danger: #f07a8a;
+    --danger-soft: #3d2027;
+    --info: #82b4dc;
+    --info-soft: #1d2c3a;
+    --fill-hover: #ffffff0f;
+    --fill-selected: #ffffff1a;
+    --scrim: #00000080;
+    --glass-fill: #2a2a2aa6;
+    --shadow-control: 0 1px 1px #0000004d;
+    --shadow-float: 0 1px 2px #00000066, 0 6px 20px #00000073;
+    --logo-filter: grayscale(1) invert(1);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --canvas: #161616;
+  --surface: #1c1c1c;
+  --surface-raised: #252525;
+  --surface-sunken: #111111;
+  --ink: #ededed;
+  --ink-secondary: #a3a3a3;
+  --ink-tertiary: #8c8c8c;
+  --line: #2f2f2f;
+  --line-control: #737373;
+  --accent: var(--ink);
+  --accent-soft: #2e2e2e;
+  --on-accent: #161616;
+  --focus-ring: var(--accent);
+  --success: #6cc3b4;
+  --success-soft: #183230;
+  --warning: #e2b054;
+  --warning-soft: #3a2e17;
+  --danger: #f07a8a;
+  --danger-soft: #3d2027;
+  --info: #82b4dc;
+  --info-soft: #1d2c3a;
+  --fill-hover: #ffffff0f;
+  --fill-selected: #ffffff1a;
+  --scrim: #00000080;
+  --glass-fill: #2a2a2aa6;
+  --shadow-control: 0 1px 1px #0000004d;
+  --shadow-float: 0 1px 2px #00000066, 0 6px 20px #00000073;
+  --logo-filter: grayscale(1) invert(1);
+  color-scheme: dark;
+}
+:where(button, input, select, a):focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+input::placeholder {
+  color: var(--ink-tertiary);
+  opacity: 1;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--accent);
+}
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .shell .cart-bar {
+    background: var(--surface-raised);
+    backdrop-filter: none;
+  }
+}

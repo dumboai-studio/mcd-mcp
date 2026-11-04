@@ -58,7 +58,7 @@ You can also install once with `npm install -g @dumbo-ai/mcd-mcp`, then use `"co
 | Pay              | Confirm the order and scan the payment QR code to continue in the McDonald's app                  |
 | Follow the order | Automatically refreshed status, pickup or delivery information, and cancellation of unpaid orders |
 
-The UI follows the host's light/dark theme and adapts to the available width. On hosts that support `updateModelContext`, it shares the selected store, cart and order state with the assistant.
+The compact, monochrome UI follows the host's light/dark theme and adapts to the available width. On hosts that support `updateModelContext`, it shares the selected store, cart and order state with the assistant.
 
 A client without MCP Apps rendering receives tool results but cannot display this interface. App-only tools depend on the host honoring their visibility metadata; the server does not enforce a separate UI-only authorization check.
 
