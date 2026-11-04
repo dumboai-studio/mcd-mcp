@@ -54,7 +54,6 @@ export function Header({
       <div className="header-row">
         <div className="brand">
           <BrandMark />
-          <span className="brand-name">麦当劳点餐</span>
           {mock && <Badge tone="yellow">模拟数据</Badge>}
         </div>
         <ol className="steps" aria-label="点餐进度">

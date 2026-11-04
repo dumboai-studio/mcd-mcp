@@ -1377,9 +1377,6 @@ dialog::backdrop {
     min-height: 44px;
   }
 }
-.brand-name {
-  font: 600 0.875rem/1.4 var(--font-sans);
-}
 .step-index + span {
   min-width: 0;
 }
