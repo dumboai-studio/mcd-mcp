@@ -82,16 +82,17 @@ export function Header({
           </div>
         )}
       </div>
-      {((stage !== "menu" && (mode || store)) ||
-        (mode === "delivery" && address?.fullAddress)) && (
-        <div className="context-line muted">
-          {stage !== "menu" && mode && <span>{MODE_META[mode].label}</span>}
-          {stage !== "menu" && store && <span>{store.storeName}</span>}
-          {mode === "delivery" && address?.fullAddress && (
-            <span>送至 {address.fullAddress}</span>
-          )}
-        </div>
-      )}
+      {stage !== "checkout" &&
+        ((stage !== "menu" && (mode || store)) ||
+          (mode === "delivery" && address?.fullAddress)) && (
+          <div className="context-line muted">
+            {stage !== "menu" && mode && <span>{MODE_META[mode].label}</span>}
+            {stage !== "menu" && store && <span>{store.storeName}</span>}
+            {mode === "delivery" && address?.fullAddress && (
+              <span>送至 {address.fullAddress}</span>
+            )}
+          </div>
+        )}
     </header>
   );
 }

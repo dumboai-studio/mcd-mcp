@@ -20,9 +20,9 @@ Actual app UI with product images from the [McDonald's website](https://www.mcdo
 
 ![Menu categories, meal cards and shopping cart](docs/screenshots/menu.png)
 
-**Checkout**
+**Order review and checkout**
 
-![Checkout with coupons, pickup options and price breakdown](docs/screenshots/checkout.png)
+![Items and pickup settings beside coupons, totals and order confirmation](docs/screenshots/checkout.png)
 
 ## Quick start
 

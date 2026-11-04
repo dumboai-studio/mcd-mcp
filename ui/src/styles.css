@@ -733,6 +733,118 @@ select:focus {
 }
 
 /* ---------- checkout ---------- */
+.checkout-content {
+  width: 100%;
+  max-width: 1040px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+.checkout-head {
+  justify-content: space-between;
+}
+.checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+}
+.checkout-main {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.checkout-main > .panel,
+.checkout-summary {
+  min-width: 0;
+}
+.checkout-store {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+  border-bottom: var(--stroke-hairline) solid var(--line);
+}
+.checkout-store > svg {
+  flex: none;
+  color: var(--ink-secondary);
+}
+.checkout-store-name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.checkout-address {
+  overflow-wrap: anywhere;
+}
+.checkout-section-head,
+.checkout-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.checkout-stage .cart-lines {
+  gap: 0;
+}
+.checkout-stage .cart-line + .cart-line {
+  border-top: var(--stroke-hairline) solid var(--line);
+}
+.checkout-extras,
+.checkout-remark,
+.checkout-payment,
+.checkout-summary > section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.checkout-extras {
+  margin-top: 4px;
+}
+.checkout-remark input {
+  width: 100%;
+  min-width: 0;
+}
+.checkout-summary {
+  gap: 16px;
+}
+.checkout-pricing,
+.checkout-payment {
+  padding-top: 16px;
+  border-top: var(--stroke-hairline) solid var(--line);
+}
+.checkout-total {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.checkout-note {
+  margin: 0;
+  text-align: center;
+}
+.coupon-terms,
+.coupon-unavailable > summary {
+  color: var(--ink-secondary);
+  font-size: 0.75rem;
+}
+.coupon-terms > summary,
+.coupon-unavailable > summary {
+  cursor: pointer;
+  padding-block: 2px;
+}
+.coupon-terms > div {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+.coupon-unavailable[open] > summary {
+  margin-bottom: 8px;
+}
+.coupon-terms > summary:focus-visible,
+.coupon-unavailable > summary:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
 .coupon-list {
   display: flex;
   flex-direction: column;
@@ -760,6 +872,10 @@ select:focus {
 }
 .coupon-title {
   font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.coupon > .btn {
+  flex: none;
 }
 .price-table {
   display: grid;
@@ -1012,18 +1128,8 @@ dd.total {
   padding-top: 12px;
   border-top: var(--stroke-hairline) solid var(--line);
 }
-.shell[data-wide="true"] .checkout-stage {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-content: start;
-  align-items: start;
-}
-.shell[data-wide="true"] .checkout-stage > .stage-head {
-  grid-column: 1 / -1;
-}
-.shell[data-wide="true"] .checkout-stage > .error-box {
-  grid-column: 1 / -1;
+.shell[data-wide="true"] .checkout-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
 }
 .shell[data-wide="true"] .order-stage {
   max-width: 900px;
@@ -1373,8 +1479,14 @@ dialog::backdrop {
     min-height: 44px;
   }
   .checkbox,
-  .radio {
+  .radio,
+  .coupon-terms > summary,
+  .coupon-unavailable > summary {
     min-height: 44px;
+  }
+  .coupon-terms > summary,
+  .coupon-unavailable > summary {
+    padding-block: 12px;
   }
 }
 .step-index + span {

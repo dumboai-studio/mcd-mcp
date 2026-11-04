@@ -20,9 +20,9 @@
 
 ![餐品分类、菜单卡片和购物车](docs/screenshots/menu.png)
 
-**结算**
+**确认订单**
 
-![优惠券、取餐方式和费用明细](docs/screenshots/checkout.png)
+![左侧核对餐品和取餐设置，右侧选择优惠券、查看金额并确认下单](docs/screenshots/checkout.png)
 
 ## 快速开始
 
