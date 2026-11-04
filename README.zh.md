@@ -6,17 +6,7 @@
 
 ## 架构
 
-```mermaid
-flowchart LR
-    C["MCP Apps 客户端<br/>对话 + 点餐界面"] <-->|"stdio / HTTP"| S["mcd-mcp<br/>工具 + 界面资源"]
-    S <-->|"JSON-RPC"| API["麦当劳官方 MCP<br/>菜单 + 订单"]
-    classDef client fill:#e0f2fe,stroke:#0284c7,color:#0f172a
-    classDef service fill:#ecfdf5,stroke:#059669,color:#0f172a
-    classDef external fill:#f1f5f9,stroke:#64748b,color:#0f172a
-    class C client
-    class S service
-    class API external
-```
+![MCP Apps 客户端通过 mcd-mcp 连接官方服务](docs/architecture.zh.png)
 
 客户端加载随服务提供的界面，并把界面的工具调用转给本服务。选店、浏览菜单和结算都可以直接点击完成，不需要反复与模型对话。宿主协议见 [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview)。
 
@@ -24,7 +14,7 @@ flowchart LR
 
 ## 界面截图
 
-以下是实际界面搭配内置模拟数据和餐品占位图的截图。价格和门店仅作演示，未创建真实订单。
+实际界面截图，商品图片来自[麦当劳官网](https://www.mcdonalds.com.cn/product/mcdonalds/)；价格和门店使用演示数据。
 
 **菜单与购物车**
 

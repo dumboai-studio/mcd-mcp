@@ -6,17 +6,7 @@ Browse the menu, customize meals, apply coupons and follow your order inside an 
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    C["MCP Apps client<br/>Chat + ordering UI"] <-->|"stdio / HTTP"| S["mcd-mcp<br/>Tools + UI resource"]
-    S <-->|"JSON-RPC"| API["McDonald's MCP<br/>Official service"]
-    classDef client fill:#e0f2fe,stroke:#0284c7,color:#0f172a
-    classDef service fill:#ecfdf5,stroke:#059669,color:#0f172a
-    classDef external fill:#f1f5f9,stroke:#64748b,color:#0f172a
-    class C client
-    class S service
-    class API external
-```
+![MCP Apps client connected through mcd-mcp to the official service](docs/architecture.png)
 
 The host loads the bundled UI and forwards its tool calls to this server. Store search, menu browsing and checkout happen in the interface without another model turn. See [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) for the host protocol.
 
@@ -24,7 +14,7 @@ The host loads the bundled UI and forwards its tool calls to this server. Store 
 
 ## Screenshots
 
-Captured from the actual UI with built-in mock data and placeholder food images. Prices and stores are examples; no real order was placed.
+Actual app UI with product images from the [McDonald's website](https://www.mcdonalds.com.cn/product/mcdonalds/). Prices and stores use sample data.
 
 **Menu and shopping cart**
 
